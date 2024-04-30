@@ -821,3 +821,105 @@ plt.tight_layout()  # Adjust layout to prevent clipping of labels
 plt.show()
 
 #**************************************************************************************
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the calls data from a CSV file
+calls_data = calls
+
+# Plot a chart identifying areas where maximum number of calls are reported
+calls_counts = calls_data.groupby('area_occ')['id'].count().reset_index()
+calls_counts = calls_counts.sort_values('id', ascending=False)
+
+# Get data for the donut chart
+labels = calls_counts['area_occ']
+sizes = calls_counts['id']
+
+# Plotting the donut chart
+plt.figure(figsize=(7, 7))  # Reduced size by 44%
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, wedgeprops=dict(width=0.3, edgecolor='w'))
+plt.title('Number of calls by area')
+plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Define the categories
+categories = {
+    "NARCOTICS": ["110 NARCOTIC ACTIVIT", "110 NARCOTIC SUSP", "110 POSS NARCOTIC AC", "110 POSS NARCOTIC SU"],
+    "SUSPICION": ["146 POSS SUSP", "146 POSS SUSP J/L", "146 SUSP", "146 SUSP NOW"],
+    "ASSAULT": ["187 AMB", "187 POSS", "187 POSS AMB", "187 POSS INVEST", "187 POSS SUSPECT", "187 SUSP NOW"],
+    "ATTACK": ["207 AMB", "207 AMB J/O", "207 ATT", "207 ATT INVEST", "207 ATT J/O", "207 INVEST", 
+               "207 I/P", "207 J/O", "207 POSS", "207 POSS ATT SUSP", "207 POSS DOM VIOL SU", 
+               "207 POSS I/P", "207 POSS J/O", "207 POSS SUSP", "207 POSS SUSP J/L", "207 POSS SUSP NOW", 
+               "207 SUSP", "207 SUSP J/L", "207 SUSP NOW"],
+    "ROBBERY": ["211 AMB", "211 AMB ATT J/O", "211 AMB GTA", "211 AMB GTA J/O", "211 AMB J/O", 
+                "211 ATT", "211 ATT J/O", "211 ATT SUSP J/L", "211 ATT SUSP NOW", "211 GTA", 
+                "211 GTA INVEST", "211 GTA I/P", "211 GTA J/O", "211 GTA SUSP", "211 GTA SUSP NOW", 
+                "211 INVEST", "211 I/P", "211 J/O", "211 OFCR HLDG", "211 OFCR HLDG ATT", "211 POSS", 
+                "211 POSS ATT", "211 POSS ATT P/S", "211 POSS GTA", "211 POSS GTA SUSP", "211 POSS I/P", 
+                "211 POSS J/O", "211 POSS SUSP", "211 POSS SUSP J/L", "211 POSS SUSP NOW", "211 P/S", 
+                "211 P/S SHOTS FIRED", "211 P/S SUSP", "211 ROBBERY", "211 SUSP", "211 SUSP J/L", 
+                "211 SUSP NOW"],
+    "BATTERY": ["242 AMB", "242 AMB DOM VIOL", "242 AMB DOM VIOL SUS", "242 AMB INVEST", 
+                "242 AMB J/O", "242 AMB SUSP J/L", "242 AMB SUSP NOW", "242 BATTERY", 
+                "242 BATTERY DOMESTIC", "242 BATTERY INVEST", "242 DOM VIOL", "242 DOM VIOL INVESTI", 
+                "242 DOM VIOL J/O", "242 DOM VIOL R/O VIO", "242 DOM VIOL SUSP", "242 I/P", 
+                "242 J/O", "242 J/O  HATE CRIME", "242 OFCR HLDG", "242 POSS AMB", 
+                "242 POSS AMB SUSP", "242 POSS DOM VIOL", "242 POSS I/P", "242 POSS J/O", 
+                "242 POSS SUSP", "242 POSS SUSP HATE C", "242 POSS SUSP J/L", "242 POSS SUSP NOW", 
+                "242 SUSP", "242 SUSP J/L", "242 SUSP J/L HATE CR", "242 SUSP NOW"],
+    "ADW": ["245 ADW", "245 ADW POSS DOM VIO", "245 AMB", "245 AMB CUTTING", "245 AMB DOM VIOL", 
+            "245 AMB I/P", "245 AMB J/O", "245 AMB SHOTS FIRED", "245 AMB SUSP", "245 AMB SUSP J/L", 
+            "245 AMB SUSP NOW", "245 ATTEMPT", "245 ATTEMPT W/VEH", "245 CUTTING INV", "245 DOM VIOL", 
+            "245 DOM VIOL IN PROG", "245 DOM VIOL INVEST", "245 DOM VIOL R/O", "245 DOM VIOL SUSP", 
+            "245 DOM VIOL SUSP J/", "245 DOM VIOL SUSP NO", "245 INVEST", "245 I/P", "245 I/P W/ VEH", 
+            "245 J/O", "245 J/O SHOTS FIRED", "245 OFCR HLDG", "245 POSS", "245 POSS AMB SUSP", 
+            "245 POSS DOM VIOL I/", "245 POSS HATE CRIME", "245 POSS I/P", "245 POSS SHOTS FIRED", 
+            "245 POSS SUSP", "245 POSS SUSP NOW", "245 SHOTS FIRED", "245 SHOTS FIRED I/P", 
+            "245 SHOTS FIRED J/O", "245 SUSP", "245 SUSP J/L", "245 SUSP NOW", "245 W/VEH", 
+            "245 W/VEH AMB E/R", "245 W/VEH INVEST", "245 W/VEH INVEST HAT", "245 W/VEH J/O", 
+            "245 W/VEH JUST LEFT", "245 W/VEH SUSP", "245 W/VEH SUSP J/L", "245 W/VEH SUSP NOW"],
+    "BURGLARY": ["246 AMB", "246 HEARD ONLY", "246 INHAB DWELLING", "246 INHAB DWELL INVE", 
+                 "246 INVEST", "246 I/P", "246 POSS HEARD ONLY", "246 POSS INHAB DWELL", 
+                 "246 SHOTS FIRED"],
+    "HOMICIDE": ["261 AMB", "261 AMB ATT SUSP", "261 AMB INVEST", "261 AMB J/O", "261 ATT", 
+                 "261 ATTACK", "261 ATT INVEST", "261 ATT J/O", "261 INVEST", "261 I/P", "261 J/O", 
+                 "261 POSS", "261 POSS I/P", "261 POSS SUSP", "261 SUSP", "261 SUSP J/L", 
+                 "261 SUSP THERE NOW"],
+    "ABUSE": ["288 ABUSE", "288 ABUSE INVEST", "288 ABUSE I/P", "288 ABUSE J/O", "288 ABUSE SUSP", 
+              "288 ABUSE SUSP J/L", "288 ABUSE SUSP NOW", "288 ABUSE SUSP/VICT", "288 ALONE", 
+              "288 ALONE INVEST", "288 AMB ABUSE", "288 AMB ABUSE INVEST", "288 AMB ABUSE J/O", 
+              "288 AMB I/P", "288 ASSAULTING", "288 ASSAULT INVEST", "288 CHILD", "288 MOLEST", 
+              "288 MOLEST INVEST", "288 MOLEST SUSP", "288 MOLEST SUSP J/L", "288 MOLEST SUSP NOW", 
+              "288 POSS ABUSE", "288 POSS ABUSE INVES", "288 POSS ABUSE J/O", "288 POSS ABUSE SUSP", 
+              "288 POSS ALONE", "288 POSS MOLEST", "288 POSS MOLEST INVE", "288 POSS MOLEST SUSP", 
+              "288 POSS NEGLECT"],
+    "DISPUTE": ["620 BUSN", "620 BUSN R/O", "620 DISPUTE", "620 DISPUTE OTHER", "620 DOM VIOL", 
+                "620 DOM VIOL R/O", "620 FAMILY", "620 FAMILY R/O", "620 LANDLORD TENANT", 
+                "620 LANDLORD/TENANT", "620 MAN/WMN", "620 NEIGHBOR", "620 NEIGHBOR R/O", 
+                "620 ROOMMATE", "620 ROOMMATE R/O"]
+}
+
+
+# Create a new column 'category' based on the values in 'call_type_text'
+def categorize_call_type(call_type):
+    for category, values in categories.items():
+        if call_type in values:
+            return category
+
+calls_data['category'] = calls_data['call_type_text'].apply(categorize_call_type)
+
+# Group by 'category' and count occurrences
+category_counts = calls_data['category'].value_counts()
+
+# Plotting the bar graph with reduced size
+plt.figure(figsize=(6.8, 4.08))  # Reduced size by 32%
+category_counts.plot(kind='bar', color='skyblue')
+plt.title('Number of Calls by Category')
+plt.xlabel('Category')
+plt.ylabel('Number of Calls')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
