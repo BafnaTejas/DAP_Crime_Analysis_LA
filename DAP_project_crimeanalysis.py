@@ -100,3 +100,30 @@ class Database:
         if "msdriver" in db_config:
             uri = "{}?driver={}".format(uri, db_config['msdriver'])
         return mongo_uri if mongo else uri
+    @staticmethod
+    def save_to_postgres(df, table_name, schema='public', session=None, append=False):
+        session_f = Database.get_postgres_session() if session is None else session
+        cur = session_f.connection().connection.cursor()
+        metadata = MetaData(schema=schema)
+        table = Table(table_name, metadata, autoload_with=Database.__engine)
+        output = io.StringIO()
+        success = True
+        common_cols = {i.name for i in table.columns}.intersection(set(df.columns))
+        cols = [col for col in df.columns if col in common_cols]
+        try:
+            if not append:
+                Database.delete_table_data(table_name=table_name, schema_name=schema, session=session)
+            columns_with_quotes = [f"{col}" for col in cols]
+            df[cols].to_csv(output, sep='\t', header=False, index=False)
+            output.seek(0)
+            cur.copy_from(output, table_name, sep='\t', columns=columns_with_quotes, null="")  # null values become
+            if session is None:
+                session_f.commit()
+        except Exception as e:
+            print(traceback.format_exc())
+            session_f.rollback()
+            raise Exception(e)
+        finally:
+            # connection.close()
+            if session is None:
+                session_f.close()
