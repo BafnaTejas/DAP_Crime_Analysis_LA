@@ -960,3 +960,24 @@ plt.title('Number of Calls by Time Window')
 plt.axis('equal')
 plt.show()
 
+#**********************************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming you have loaded your data into a DataFrame called 'arrest'
+
+# Group by 'area_name' and count the number of arrests
+arrest_counts = arrest.groupby('area_name')['id'].count()
+
+# Plotting the bar graph
+plt.figure(figsize=(10, 6))  # Adjust the figure size as needed
+arrest_counts.plot(kind='bar', color='skyblue')
+plt.title('Number of Arrests by Area')
+plt.xlabel('Area Name')
+plt.ylabel('Number of Arrests')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+#************************************************************************************************************
