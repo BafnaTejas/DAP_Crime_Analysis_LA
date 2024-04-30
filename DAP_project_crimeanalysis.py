@@ -1057,3 +1057,53 @@ plt.tight_layout()
 plt.show()
 
 #************************************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming you have a DataFrame named arrest with columns age and id
+
+# Define age categories
+age_categories = {
+    'Children': (0, 12),
+    'Teenagers': (13, 19),
+    'Young Adults': (20, 29),
+    'Adults (30-39)': (30, 39),
+    'Adults (40-49)': (40, 49),
+    'Adults (50-59)': (50, 59),
+    'Seniors': (60, 120)  # Assuming maximum age as 120
+}
+
+# Function to assign age category
+def get_age_category(age):
+    for category, (min_age, max_age) in age_categories.items():
+        if min_age <= age <= max_age:
+            return category
+    return 'Unknown'
+
+# Apply age category function to create a new column
+arrest['age_category'] = arrest['age'].apply(get_age_category)
+
+# Count the number of arrests in each age category
+arrests_by_age_category = arrest.groupby('age_category')['id'].count()
+
+# Plotting the donut chart
+plt.figure(figsize=(7, 7))
+
+# Colors for the sections
+colors = ['#ff9999','#66b3ff','#99ff99','#ffcc99', '#c2c2f0', '#ffb3e6', '#c2f0c2']
+
+# Create pie chart
+plt.pie(arrests_by_age_category, labels=arrests_by_age_category.index, autopct='%1.1f%%', startangle=90, colors=colors)
+
+# Draw a circle in the middle to create a donut chart
+centre_circle = plt.Circle((0,0),0.70,fc='white')
+fig = plt.gcf()
+fig.gca().add_artist(centre_circle)
+
+plt.title('Arrests by Age Category')
+plt.axis('equal')  
+plt.tight_layout()
+plt.show()
+
+#**********************************************************************************************************
