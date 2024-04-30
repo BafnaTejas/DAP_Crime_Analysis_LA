@@ -396,3 +396,30 @@ if __name__ == '__main__':
     sq2 = session.query(CallsLA)
     calls = pd.read_sql(sq2.statement, session.bind)
     Database.close_postgres_session(session)
+    
+
+# Crime rate based on area_name and area
+crime_rate = crime.groupby(['area_name', 'area'])['crm_cd'].count().reset_index()
+crime_rate.columns = ['area_name', 'area', 'crime_count'] 
+crime_rate['crime_rate'] = crime_rate['crime_count'] / crime['area'].nunique()
+crime_rate = crime_rate.sort_values('crime_rate', ascending=False)
+
+# Crime type based on area_name 
+crime_type = crime.groupby(['area_name', 'crm_cd_desc'])['crm_cd'].count().reset_index()
+crime_type = crime_type.sort_values('crm_cd', ascending=False)
+
+# Crime based on victim (male or female)
+crime_victim = crime.groupby(['vict_sex'])['crm_cd'].count().reset_index()
+
+# Plot a chart based on number of crime instances occurred as per area
+crime_counts = crime_data.groupby('area_name')['id'].count().reset_index()
+
+# Sort the data by the number of crimes in descending order
+crime_counts = crime_counts.sort_values(by='id', ascending=False)
+
+crime_counts.plot(x='area_name', y='id', kind='bar')
+plt.xlabel('Area')
+plt.ylabel('Number of crimes')
+plt.title('Number of crimes by area')
+plt.show()
+
