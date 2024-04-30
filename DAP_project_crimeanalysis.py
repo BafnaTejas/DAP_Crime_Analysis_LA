@@ -166,7 +166,35 @@ class Database:
             # connection.close()
             if session is None:
                 session_f.close()
-                
+
+class Extract_data(luigi.Task):
+    collection_name = luigi.Parameter()
+
+    def output(self):
+        cwd = os.getcwd()
+        csv_path = os.path.join(cwd, 'Data', f'{self.collection_name}.csv').replace("\\", '/')
+        return luigi.LocalTarget(csv_path)
+
+    def run(self):
+        # read csv
+        cwd = os.getcwd()
+        path = os.path.join(cwd, 'Data', f'{self.collection_name}.json').replace("\\", '/')
+        file_path = path
+        # changes for loading json
+        data = json.load(open(file_path))
+        df = pd.DataFrame(data["data"])
+
+        new_names = pd.DataFrame(data['meta']['view']['columns'])['name'].tolist()
+        old_names = df.keys().tolist()
+        col_rename = list(zip(old_names, new_names))
+        col_rename = {key: value for key, value in col_rename}
+        df.rename(columns=col_rename, inplace=True)
+        # Save DataFrame as CSV
+        cwd = os.getcwd()
+        csv_path = os.path.join(cwd, 'Data', f'{self.collection_name}.csv').replace("\\", '/')
+        df.to_csv(csv_path, index=False)
+        print("extract ran")
+        
 class Save_to_mongo(luigi.Task):
     collection_name = luigi.Parameter()
 
@@ -189,14 +217,7 @@ class Save_to_mongo(luigi.Task):
         else:
             collection.insert_many(records)
 
-    def run(self):
-        data = pd.read_csv(self.input().path)
-        #insert records to mongo
-        client = Database.get_mongo_client()
-        db = client.dap
-        data = data.to_dict(orient="records")
-        self.insert_mongo_chunk_records(db, self.collection_name, data)
-        print(f"{self.collection_name} task done")
+
 
 class save_final(luigi.Task):
     collection_name = luigi.Parameter()
