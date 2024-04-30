@@ -166,6 +166,37 @@ class Database:
             # connection.close()
             if session is None:
                 session_f.close()
+                
+class Save_to_mongo(luigi.Task):
+    collection_name = luigi.Parameter()
+
+    def requires(self):
+        return Extract_data(collection_name=self.collection_name)
+
+    def output(self):
+        cwd = os.getcwd()
+        csv_path = os.path.join(cwd, 'Data', f'{self.collection_name}.csv').replace("\\", '/')
+        return luigi.LocalTarget(csv_path)
+
+    def insert_mongo_chunk_records(self, db, collection_name, records):
+        db[collection_name].delete_many({})
+        collection = db[collection_name]
+        if len(records) > 99999:
+            records = [records[i: i + 50000] for i in range(0, len(records), 50000)]
+            for record in list(records):
+                collection.insert_many(list(record), ordered=False)
+                print(datetime.now())
+        else:
+            collection.insert_many(records)
+
+    def run(self):
+        data = pd.read_csv(self.input().path)
+        #insert records to mongo
+        client = Database.get_mongo_client()
+        db = client.dap
+        data = data.to_dict(orient="records")
+        self.insert_mongo_chunk_records(db, self.collection_name, data)
+        print(f"{self.collection_name} task done")
 
 class save_final(luigi.Task):
     collection_name = luigi.Parameter()
@@ -329,3 +360,18 @@ class CallsLA(Base):
     dispatch_time = Column(Time)
     call_type_code = Column(String(255))
     call_type_text = Column(String(255))
+
+if __name__ == '__main__':
+    luigi.build([save_final(collection_name='crime_la'),
+                 save_final(collection_name='arrest_la'),
+                 save_final(collection_name='calls_la')], local_scheduler=True)
+    
+    # fetch data from postgres using sqlalchemy orm
+    session = Database.get_postgres_session()
+    sq = session.query(CrimeLA)
+    crime = pd.read_sql(sq.statement, session.bind)
+    sq1 = session.query(ArrestLA)
+    arrest = pd.read_sql(sq1.statement, session.bind)
+    sq2 = session.query(CallsLA)
+    calls = pd.read_sql(sq2.statement, session.bind)
+    Database.close_postgres_session(session)
