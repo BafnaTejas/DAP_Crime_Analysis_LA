@@ -82,6 +82,18 @@ class Database:
             Database.initialize_postgres_database()
             return Database.__engine
 
+    @staticmethod
+    def close_postgres_session(session):
+        if session:
+            session.close()
+
+    @staticmethod
+    def get_mongo_client():
+        if Database.__client:
+            return Database.__client
+        else:
+            Database.initialize_mongodb()
+            return Database.__client
 
 
     @classmethod
