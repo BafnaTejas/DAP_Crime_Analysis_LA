@@ -1107,3 +1107,88 @@ plt.tight_layout()
 plt.show()
 
 #**********************************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming you have a DataFrame named arrest with a column disposition_description
+
+# Define disposition descriptions and their counts
+disposition_counts = {
+    "Legal Proceedings": [
+        "PRE-FILING INVESTIGATION",
+        "MISDEMEANOR COMPLAINT FILED",
+        "FELONY COMPLAINT FILED",
+        "PROVED ADULT",
+        "DISTRICT ATTORNEY REJECT",
+        "CITY ATTORNEY REJECT"
+    ],
+    "Social Services": [
+        "DEPARTMENT OF SOCIAL SERVICES",
+        "DEPARTMENT OF MENTAL HEALTH",
+        "CALIFORNIA YOUTH AUTHORITY",
+        "COMMUNITY SERVICE"
+    ],
+    "Release": [
+        "RELEASED/INSUFFICENT EVIDENCE",
+        "COUNSELED/RELEASED",
+        "RELEASED TO MILITARY AUTHORITY",
+        "RELEASED PETITION"
+    ],
+    "Technical Arrest": [
+        "849(B)(1) PC/TECHNICAL ARREST"
+    ],
+    "Other Law Enforcement": [
+        "OTHER LAW ENFORCEMENT AGENCY",
+        "ACTION SUSP"
+    ],
+    "Miscellaneous": [
+        "OTHER (REQUIRES ADDITION ACTION)",
+        "OTHER DISPOSITION"
+    ],
+    "Probation": [
+        "PROBATION"
+    ],
+    "Court Ordered": [
+        "PROBATION",
+        "COMMUNITY SERVICE"
+    ]
+}
+
+# Aggregate counts for each category
+category_counts = {category: 0 for category in disposition_counts}
+for category, dispositions in disposition_counts.items():
+    category_counts[category] = sum(disposition_counts[category].count(disposition) for disposition in arrest['disposition_description'])
+
+# Plotting the bar graph
+plt.figure(figsize=(8, 6))
+
+# Extracting category names and counts
+categories = list(category_counts.keys())
+counts = list(category_counts.values())
+
+# Plotting the bar graph
+plt.barh(categories, counts, color='#86bf91')
+
+# Adding labels and title
+plt.xlabel('Count')
+plt.ylabel('Disposition Categories')
+plt.title('Distribution of Disposition Categories')
+
+# Display the plot
+plt.tight_layout()
+plt.show()
+
+#*********************************************************************************************************************
+
+# Arrest based on area and sex 
+arrest_sex = arrest.groupby(['area_name', 'sex_code'])['charge_group_code'].count().reset_index() 
+
+# Arrest based on age and area 
+arrest_age = arrest.groupby(['area_name', 'age'])['charge_group_code'].count().reset_index() 
+
+# Arrest based on charge_group_description and count of arrest 
+arrest_charge = arrest.groupby('charge_group_description')['charge_group_code'].count().reset_index() 
+
+# Arrest based on charge_group_description and area_name 
+arrest_area = arrest.groupby(['area_name', 'charge_group_description'])['charge_group_code'].count().reset_index()
