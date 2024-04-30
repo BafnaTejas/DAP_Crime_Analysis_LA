@@ -127,3 +127,79 @@ class Database:
             # connection.close()
             if session is None:
                 session_f.close()
+
+class save_final(luigi.Task):
+    collection_name = luigi.Parameter()
+
+    def requires(self):
+        return Save_to_mongo(collection_name=self.collection_name)
+
+    def filter_df(self, df, cols_to_remove=None):
+        df = df.drop(cols_to_remove, axis=1) if cols_to_remove not in [None, []] else df
+        column_names = df.columns.tolist()
+        column_mapping = {name: name.lower().replace(' ', '_') for name in column_names}
+        df.rename(columns=column_mapping, inplace=True)
+        return df
+
+    def run(self):
+        client = Database.get_mongo_client()
+        db = client.dap
+        # fetch all collections
+        collection = db[self.collection_name]
+        df = pd.DataFrame(list(collection.find()))
+
+        # data cleaning/processing
+        df.replace({np.nan: None}, inplace=True)
+
+        if self.collection_name == 'crime_la':
+            cols_to_remove = ['_id', 'sid', 'position', 'created_meta', 'updated_meta', 'meta', 'created_at', 'updated_at']
+            df = self.filter_df(df, cols_to_remove)
+            df = df.loc[~df['time_occ'].isin([1, 0, None, np.nan])]
+            df = df.loc[~df['date_occ'].isin([1, 0, None, np.nan])]
+            df['time_occ'] = pd.to_datetime(df['time_occ'], format='mixed')
+            df['date_occ'] = df['date_occ'].astype('datetime64[ns]').dt.date
+        elif self.collection_name == 'arrest_la':
+            cols_to_remove = ['_id', 'sid', 'position', 'created_meta', 'updated_meta', 'meta', 'created_at', 'updated_at']
+            df = self.filter_df(df, cols_to_remove)
+            df.rename(columns={'neighborhood_councils_(certified)': 'neighborhood_councils_certified'}, inplace=True)
+            df = df.loc[~df['time'].isin([1, 0, None, np.nan])]
+            df = df.loc[~df['arrest_date'].isin([1, 0, None, np.nan])]
+            df = df.loc[~df['booking_time'].isin([1, 0, None, np.nan])]
+            df['time'] = pd.to_datetime(df['time'], format='mixed')
+            df['booking_time'] = pd.to_datetime(df['booking_time'], format='mixed')
+            df['arrest_date'] = df['arrest_date'].astype('datetime64[ns]').dt.date
+        elif self.collection_name == 'calls_la':
+            cols_to_remove = ['_id', 'sid', 'position', 'created_meta', 'updated_meta', 'meta', 'created_at', 'updated_at']
+            df = self.filter_df(df, cols_to_remove)
+
+        # Load your table model
+        table_name = self.collection_name
+        meta = MetaData()
+        table = Table(table_name, meta, auto_load=True, autoload_with=Database.get_postgres_engine())
+        # Get column names and data types
+        column_data_types = {column.name: str(column.type) for column in table.columns}
+        int_cols = []
+        for key, value in column_data_types.items():
+            if column_data_types[key] == 'INTEGER':
+                int_cols.append(key)
+
+        df[int_cols] = df[int_cols].replace({None: 0}).astype(int)
+        p_key = [str(x).split('.')[1] for x in list(table.primary_key)]
+        for col in p_key:
+            df = df[df[col].notna()]
+            df = df[~df[col].isnull()]
+        df = df.drop_duplicates()
+        try:
+            session = Database.get_postgres_session()
+            Database.save_to_postgres(df, self.collection_name, append=False, session=session)  # truncate and insert
+            session.commit()
+        except Exception as err:
+            session.rollback()
+            raise err
+        finally:
+            Database.close_postgres_session(session)
+            # Save DataFrame as CSV
+            cwd = os.getcwd()
+            csv_path = os.path.join(cwd, 'Data', f'{self.collection_name}_postgres_data.csv').replace("\\", '/')
+            df.to_csv(csv_path, index=False)
+            print("fetch ran")
