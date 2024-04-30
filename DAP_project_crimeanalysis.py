@@ -923,3 +923,40 @@ plt.ylabel('Number of Calls')
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
+
+#*****************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming 'calls_data' is your DataFrame containing the calls data
+
+# Convert 'dispatch_time' column to datetime format
+calls_data['dispatch_time'] = pd.to_datetime(calls_data['dispatch_time'])
+
+# Extract the hour component
+calls_data['hour'] = calls_data['dispatch_time'].dt.hour
+
+# Define time windows
+time_windows = [(0, 3), (3, 6), (6, 9), (9, 12), (12, 15), (15, 18), (18, 21), (21, 24)]
+
+# Function to categorize the calls based on time windows
+def categorize_time_window(hour):
+    for start, end in time_windows:
+        if start <= hour < end:
+            return f"{start:02d}-{end:02d}"
+    return "Other"
+
+# Apply the categorization function to create a new column 'time_window'
+calls_data['time_window'] = calls_data['hour'].apply(categorize_time_window)
+
+# Group by 'time_window' and count occurrences
+time_window_counts = calls_data['time_window'].value_counts()
+
+# Plotting the donut chart
+plt.figure(figsize=(7, 7))
+plt.pie(time_window_counts, labels=time_window_counts.index, autopct='%1.1f%%', startangle=90, wedgeprops=dict(width=0.3, edgecolor='w'))
+plt.title('Number of Calls by Time Window')
+plt.axis('equal')
+plt.show()
+
