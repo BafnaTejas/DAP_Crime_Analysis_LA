@@ -981,3 +981,79 @@ plt.tight_layout()
 plt.show()
 
 #************************************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming you have loaded your data into a DataFrame called 'arrest'
+
+# Define categories
+categories = {
+    "Drug Related": ["Narcotic Drug Laws"],
+    "Traffic Violations": ["Moving Traffic Violations"],
+    "Property Crime": ["Receive Stolen Property", "Larceny", "Vehicle Theft", "Burglary"],
+    "Violent Crime": ["Aggravated Assault", "Robbery", "Homicide"],
+    "Public Order": ["Disturbing the Peace", "Disorderly Conduct"],
+    "Alcohol Related": ["Liquor Laws", "Drunkeness", "Driving Under Influence"],
+    "Sexual Offenses": ["Rape", "Sex (except rape/prst)"],
+    "Other": ["Federal Offenses", "Gambling", "Miscellaneous Other Violations", "Non-Criminal Detention",
+              "Pre-Delinquency", "Weapon (carry/poss)", "Prostitution/Allied", "Fraud/Embezzlement",
+              "Forgery/Counterfeit", "Other Assaults", "Against Family/Child"]
+}
+
+# Create a new column 'crime_category' based on the values in 'charge_group_description'
+def categorize_charge(charge):
+    for category, values in categories.items():
+        if charge in values:
+            return category
+    return "Other"
+
+arrest['crime_category'] = arrest['charge_group_description'].apply(categorize_charge)
+
+# Group by 'crime_category' and count occurrences
+crime_category_counts = arrest['crime_category'].value_counts()
+
+# Plotting the pie chart with reduced size
+plt.figure(figsize=(6, 6))  # Reduced size
+crime_category_counts.plot(kind='pie', autopct='%1.1f%%', startangle=140, colors=plt.cm.tab20.colors)
+plt.title('Distribution of Crime Categories')
+plt.ylabel('')
+plt.axis('equal')
+plt.show()
+
+#************************************************************************************************************
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Assuming you have a DataFrame named arrest with columns area_name, sex_code, and id
+
+# Count of crimes for each area and victim sex
+crime_counts_by_victim = arrest.groupby(['area_name', 'sex_code'])['id'].nunique().reset_index()
+
+# Pivot the data to have areas as rows and victim genders as columns
+pivot_table = crime_counts_by_victim.pivot(index='area_name', columns='sex_code', values='id').fillna(0)
+
+# Plotting the graph
+plt.figure(figsize=(10, 6))
+
+# Define bar width
+bar_width = 0.35
+
+# Get the x-axis positions
+x = np.arange(len(pivot_table))
+
+# Plot bars for each gender
+plt.bar(x - bar_width/2, pivot_table['M'], bar_width, color='blue', label='Male')
+plt.bar(x + bar_width/2, pivot_table['F'], bar_width, color='red', label='Female')
+
+plt.xlabel('Area')
+plt.ylabel('Number of crimes')
+plt.title('Number of crimes by area and victim gender')
+plt.xticks(x, pivot_table.index, rotation=45)  # Set x-axis labels to area names
+plt.legend(title='Victim Gender')
+plt.tight_layout()
+plt.show()
+
+#************************************************************************************************************
