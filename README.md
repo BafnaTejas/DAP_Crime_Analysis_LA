@@ -39,13 +39,18 @@ iii. docker-compose.yml
 
 7. Create a new database in your PostgresSQL and in MongoDB
 
-8. Then download DAP_project_crimeanalysis.py file in your system
+8. After This create a new server in PostgreSQL.
+   
+9. Run All the queries which are mention in below file which is mention below to create tables structure in postgreSQL
+   i. SQL query.txt
 
-9. Open your jupiter notebook or any other IDE's
+10. Then download DAP_project_crimeanalysis.py file in your system
 
-10. Run requirement.txt using following command
+11. Open your jupiter notebook or any other IDE's
+
+12. Run requirement.txt using following command
 
 	pip install -r requirement.txt
 
-11. After all requirements installed just run .py final
+13. After all requirements installed just run .py final
 
