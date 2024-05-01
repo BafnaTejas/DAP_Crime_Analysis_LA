@@ -820,9 +820,7 @@ plt.legend(title='Victim Gender')
 plt.tight_layout()  # Adjust layout to prevent clipping of labels
 plt.show()
 
-#**************************************************************************************
-import pandas as pd
-import matplotlib.pyplot as plt
+#*************************************************************************************
 
 # Load the calls data from a CSV file
 calls_data = calls
@@ -842,8 +840,6 @@ plt.title('Number of calls by area')
 plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 plt.show()
 
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Define the categories
 categories = {
@@ -925,12 +921,6 @@ plt.tight_layout()
 plt.show()
 
 #*****************************************************************************************
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Assuming 'calls_data' is your DataFrame containing the calls data
-
 # Convert 'dispatch_time' column to datetime format
 calls_data['dispatch_time'] = pd.to_datetime(calls_data['dispatch_time'])
 
@@ -962,11 +952,6 @@ plt.show()
 
 #**********************************************************************************************************
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Assuming you have loaded your data into a DataFrame called 'arrest'
-
 # Group by 'area_name' and count the number of arrests
 arrest_counts = arrest.groupby('area_name')['id'].count()
 
@@ -981,11 +966,6 @@ plt.tight_layout()
 plt.show()
 
 #************************************************************************************************************
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Assuming you have loaded your data into a DataFrame called 'arrest'
 
 # Define categories
 categories = {
@@ -1023,11 +1003,6 @@ plt.show()
 
 #************************************************************************************************************
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Assuming you have a DataFrame named arrest with columns area_name, sex_code, and id
 
 # Count of crimes for each area and victim sex
 crime_counts_by_victim = arrest.groupby(['area_name', 'sex_code'])['id'].nunique().reset_index()
@@ -1058,10 +1033,6 @@ plt.show()
 
 #************************************************************************************************************
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Assuming you have a DataFrame named arrest with columns age and id
 
 # Define age categories
 age_categories = {
@@ -1108,10 +1079,7 @@ plt.show()
 
 #**********************************************************************************************************
 
-import pandas as pd
-import matplotlib.pyplot as plt
 
-# Assuming you have a DataFrame named arrest with a column disposition_description
 
 # Define disposition descriptions and their counts
 disposition_counts = {
