@@ -1,0 +1,82 @@
+CREATE TABLE crime_la (
+    id varchar PRIMARY KEY,
+    dr_no INTEGER,
+    date_rptd DATE,
+    date_occ DATE,
+    time_occ TIME,
+    area INTEGER,
+    area_name VARCHAR(255),
+    rpt_dist_no INTEGER,
+    part_1_2 VARCHAR(255),
+    crm_cd INTEGER,
+    crm_cd_desc VARCHAR(255),
+    mocodes TEXT,
+    vict_age INTEGER,
+    vict_sex CHAR(1),
+    vict_descent VARCHAR(255),
+    premis_cd INTEGER,
+    premis_desc VARCHAR(255),
+    weapon_used_cd INTEGER,
+    weapon_desc VARCHAR(255),
+    status VARCHAR(255),
+    status_desc VARCHAR(255),
+    crm_cd_1 INTEGER,
+    crm_cd_2 INTEGER,
+    crm_cd_3 INTEGER,
+    crm_cd_4 INTEGER,
+    location VARCHAR(255),
+    cross_street VARCHAR(255),
+    lat FLOAT,
+    lon FLOAT
+);
+
+
+
+CREATE TABLE arrest_la (
+    id VARCHAR PRIMARY KEY, 
+    report_id INTEGER,
+    report_type VARCHAR(255),
+    arrest_date DATE,
+    time TIME,
+    area_id INTEGER,
+    area_name VARCHAR(255),
+    reporting_district INTEGER,
+    age INTEGER,
+    sex_code CHAR(1),
+    descent_code VARCHAR(255),
+    charge_group_code VARCHAR(255),
+    charge_group_description VARCHAR(255),
+    arrest_type_code VARCHAR(255),
+    charge VARCHAR(255),
+    charge_description VARCHAR(255),
+    disposition_description VARCHAR(255),
+    address VARCHAR(255),
+    cross_street VARCHAR(255),
+    lat FLOAT,
+    lon FLOAT,
+    location VARCHAR(255),
+    booking_date DATE,
+    booking_time TIME,
+    booking_location VARCHAR(255),
+    booking_location_code VARCHAR(255),
+    zip_codes VARCHAR(255),
+    census_tracts VARCHAR(255),
+    precinct_boundaries VARCHAR(255),
+    la_specific_plans VARCHAR(255),
+    council_districts VARCHAR(255),
+    neighborhood_councils_certified VARCHAR(255)
+);
+
+
+
+CREATE TABLE calls_la (
+    id Varchar PRIMARY KEY,
+    meta TEXT,
+    incident_number varchar,
+    area_occ varchar,
+    rpt_dist INTEGER,
+    dispatch_date DATE,
+    dispatch_time TIME,
+    call_type_code VARCHAR(255),
+    call_type_text VARCHAR(255)
+);
