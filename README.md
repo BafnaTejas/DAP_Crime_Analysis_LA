@@ -26,9 +26,9 @@ https://docs.docker.com/get-docker/
 2.create a folder in your local system where u run docker containers
 
 3.Put 3 files in a folder which given below:
-  i. mongoDB.env
- ii. postgresql.env
-iii. docker-compose.yml
+  	i. mongoDB.env
+ 	ii. postgresql.env
+	iii. docker-compose.yml
 
 4. Go to folder path in command prompt in which u created folder
 
@@ -42,15 +42,16 @@ iii. docker-compose.yml
 8. After This create a new server in PostgreSQL.
    
 9. Run All the queries which are mention in below file which is mention below to create tables structure in postgreSQL
-   i. SQL query.txt
 
-10. Then download DAP_project_crimeanalysis.py file in your system
+    	i. SQL query.txt
 
-11. Open your jupiter notebook or any other IDE's
+11. Then download DAP_project_crimeanalysis.py file in your system
 
-12. Run requirement.txt using following command
+12. Open your jupiter notebook or any other IDE's
+
+13. Run requirement.txt using following command
 
 	pip install -r requirement.txt
 
-13. After all requirements installed just run .py final
+14. After all requirements installed just run .py final
 
