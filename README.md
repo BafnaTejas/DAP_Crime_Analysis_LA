@@ -27,8 +27,8 @@ https://docs.docker.com/get-docker/
 
 3.Put 3 files in a folder which given below:
 
-mongoDB.env
-postgresql.env
+mongoDB.env ,
+postgresql.env , 
 docker-compose.yml
 
 4. Go to folder path in command prompt in which u created folder
