@@ -26,9 +26,10 @@ https://docs.docker.com/get-docker/
 2.create a folder in your local system where u run docker containers
 
 3.Put 3 files in a folder which given below:
-  	i. mongoDB.env
- 	ii. postgresql.env
-	iii. docker-compose.yml
+
+mongoDB.env
+postgresql.env
+docker-compose.yml
 
 4. Go to folder path in command prompt in which u created folder
 
@@ -42,7 +43,8 @@ https://docs.docker.com/get-docker/
 8. After This create a new server in PostgreSQL.
    
 9. Run All the queries which are mention in below file which is mention below to create tables structure in postgreSQL
-	i. SQL queries.txt
+
+SQL queries.txt
 
 11. Then download DAP_project_crimeanalysis.py file in your system
 
