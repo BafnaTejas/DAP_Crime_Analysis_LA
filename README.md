@@ -4,6 +4,15 @@ Group Project For Database & Analytics Programming (MSCDAD_C_JAN24I)
 
 Group Members: Tejas Bafna(me) , Utkarsh Sharma and Shreyas Bhargav 
 
+*******************************************************************************************************************************************************
+
+For installation of JSON files refer these links:
+
+https://catalog.data.gov/dataset/arrest-data-from-2020-to-present
+
+https://catalog.data.gov/dataset/crime-data-from-2020-to-present
+
+https://catalog.data.gov/dataset/lapd-calls-for-service-2024 
 
 After processing MongoDB code generated CSV files are huge in size. Because of this all csv files are uploaded in google drive to access csv files
 https://drive.google.com/drive/folders/1KsUptJ-tDaOU1klrJ8c5o3Hgoww4AwdY?usp=sharing
