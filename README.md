@@ -42,8 +42,7 @@ https://docs.docker.com/get-docker/
 8. After This create a new server in PostgreSQL.
    
 9. Run All the queries which are mention in below file which is mention below to create tables structure in postgreSQL
-
-    	i. SQL query.txt
+	i. SQL queries.txt
 
 11. Then download DAP_project_crimeanalysis.py file in your system
 
